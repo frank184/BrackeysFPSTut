@@ -40,7 +40,21 @@ public class PlayerSetup : NetworkBehaviour {
             if (ui == null) Debug.Log("No PlayerUI component on Player UI prefab");
             ui.SetController(GetComponent<PlayerController>());
             GetComponent<Player>().PlayerSetup();
+
+            string username = "Loading...";
+            if (UserAccountManager.IsLoggedIn)
+                username = UserAccountManager.PlayerUsername;
+            else username = transform.name;
+            CmdSetUsername(transform.name, username);
         }
+    }
+
+    [Command]
+    void CmdSetUsername(string playerID, string username)
+    {
+        Player player = GameManager.GetPlayer(playerID);
+        if (player != null)
+            player.username = username;
     }
 
     public override void OnStartClient()

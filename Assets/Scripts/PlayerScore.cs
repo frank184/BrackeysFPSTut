@@ -4,6 +4,9 @@ using System.Collections;
 [RequireComponent(typeof(Player))]
 public class PlayerScore : MonoBehaviour {
 
+    int lastKills = 0;
+    int lastDeaths = 0;
+
     private Player player;
 
     private void Start()
@@ -24,7 +27,7 @@ public class PlayerScore : MonoBehaviour {
         while (true)
         {
             yield return new WaitForSeconds(5f);
-            if (player.kills != 0 || player.deaths != 0)
+            
                 SyncNow();
         }
     }
@@ -36,10 +39,14 @@ public class PlayerScore : MonoBehaviour {
 
     private void OnLoadData()
     {
-        UserAccountManager.LoggedInData.kills += player.kills;
-        UserAccountManager.LoggedInData.deaths += player.deaths;
+        if (player.kills <= lastKills && player.deaths <= lastDeaths) return;
+        int killsSinceLast = player.kills - lastKills;
+        int deathsSinceLast = player.deaths - lastDeaths;
+        if (killsSinceLast == 0 && deathsSinceLast == 0) return;
+        UserAccountManager.LoggedInData.kills += killsSinceLast;
+        UserAccountManager.LoggedInData.deaths += deathsSinceLast;
         UserAccountManager.singleton.SendData();
-        player.kills = 0;
-        player.deaths = 0;
+        lastKills = player.kills;
+        lastDeaths = player.deaths;
     }
 }

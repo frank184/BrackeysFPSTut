@@ -8,6 +8,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
     GameObject pauseMenu;
 
+    [SerializeField]
+    GameObject scoreBoard;
+
     private PlayerController controller;
 
     public void Start()
@@ -18,17 +21,23 @@ public class PlayerUI : MonoBehaviour {
     private void Update()
     {
         SetFuelAmout(controller.GetThrusterFuelAmount());
-
-        if ( Input.GetKeyDown(KeyCode.Escape) )
-        {
+        if (Input.GetKeyDown(KeyCode.Escape))
             TogglePauseMenu();
-        }
+        if (Input.GetKeyDown(KeyCode.Tab))
+            scoreBoard.SetActive(true);
+        if (Input.GetKeyUp(KeyCode.Tab))
+            scoreBoard.SetActive(false);
     }
 
-    private void TogglePauseMenu()
+    public void TogglePauseMenu()
     {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
         PauseMenu.IsOn = pauseMenu.activeSelf;
+    }
+
+    public void ToggleScoreBoard()
+    {
+        scoreBoard.SetActive(!scoreBoard.activeSelf);
     }
 
     public void SetController(PlayerController controller)

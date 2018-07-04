@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GameManager : MonoBehaviour {
+
+    public delegate void OnPlayerKilledCallback(string player, string source);
+    public OnPlayerKilledCallback onPlayerKilledCallback;
+
+    #region Singleton
     public static GameManager singleton;
 
     public void Awake()
@@ -9,6 +15,7 @@ public class GameManager : MonoBehaviour {
         if (singleton == null) singleton = this;
         else Debug.LogError("Multiple GameManagers detected!");
     }
+    #endregion
 
     #region SceneCamera
     [SerializeField]
@@ -22,8 +29,13 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     #region Player Dictionary
-    private static Dictionary<string, Player> players = new Dictionary<string, Player>();
     private const string PLAYER_PREFIX = "Player ";
+    private static Dictionary<string, Player> players = new Dictionary<string, Player>();
+
+    public static Player[] getPlayers()
+    {
+        return players.Values.ToArray();
+    }
 
     //private void OnGUI()
     //{
@@ -61,7 +73,5 @@ public class GameManager : MonoBehaviour {
 
     #region Matchmaking
     public MatchSettings matchSettings;
-
-    
     #endregion
 }

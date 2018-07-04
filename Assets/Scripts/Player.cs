@@ -29,6 +29,9 @@ public class Player : NetworkBehaviour {
     private int currentHealth;
 
     [SyncVar]
+    public string username = "Loading...";
+
+    [SyncVar]
     private bool dead = false;
     public bool isDead
     {
@@ -110,7 +113,11 @@ public class Player : NetworkBehaviour {
         isDead = true;
         deaths += 1;
         Player sourcePlayer = GameManager.GetPlayer(sourcePlayerID);
-        if ( sourcePlayer != null ) sourcePlayer.kills += 1;
+        if (sourcePlayer != null)
+        {
+            GameManager.singleton.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
+            sourcePlayer.kills += 1;
+        }
         for (int i = 0; i < disabledBehavioursOnDeath.Length; i++)
             disabledBehavioursOnDeath[i].enabled = false;
         for (int i = 0; i < disabledGameObjectsOnDeath.Length; i++)
