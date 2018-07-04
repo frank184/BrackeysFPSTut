@@ -28,9 +28,16 @@ public class PlayerShoot : NetworkBehaviour {
 
     public void Update()
     {
+        currentWeapon = weaponManager.GetCurrentWeapon();
+
         if (PauseMenu.IsOn) return;
 
-        currentWeapon = weaponManager.GetCurrentWeapon();
+        if (currentWeapon.bullets < currentWeapon.maxBullets)
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                weaponManager.Reload();
+                return;
+            }
 
         if (currentWeapon.fireRate <= 0f)
         {
@@ -56,8 +63,14 @@ public class PlayerShoot : NetworkBehaviour {
     private void Shoot()
     {
 
-        if ( isLocalPlayer )
+        if ( isLocalPlayer && !weaponManager.isReloading)
         {
+            if (currentWeapon.bullets <= 0)
+            {
+                weaponManager.Reload();
+                return;
+            }
+            currentWeapon.bullets -= 1;
             // we are shooting call server
             CmdOnShoot();
 
@@ -75,7 +88,9 @@ public class PlayerShoot : NetworkBehaviour {
                     CmdPlayerShot(hit.collider.name, currentWeapon.damage, transform.name);
                 CmdOnHit(hit.point, hit.normal);
             }
-                
+
+            if (currentWeapon.bullets <= 0)
+                weaponManager.Reload();
         }
         
         

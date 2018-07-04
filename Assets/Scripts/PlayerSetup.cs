@@ -38,9 +38,10 @@ public class PlayerSetup : NetworkBehaviour {
             // Configure PlayerUI
             PlayerUI ui = playerUIsingleton.GetComponent<PlayerUI>();
             if (ui == null) Debug.Log("No PlayerUI component on Player UI prefab");
-            ui.SetController(GetComponent<PlayerController>());
-            GetComponent<Player>().PlayerSetup();
-
+            Player player = GetComponent<Player>();
+            ui.SetPlayer(player);
+            player.PlayerSetup();
+            // Set Username
             string username = "Loading...";
             if (UserAccountManager.IsLoggedIn)
                 username = UserAccountManager.PlayerUsername;

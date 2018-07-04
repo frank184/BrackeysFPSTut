@@ -45,11 +45,16 @@ public class Player : NetworkBehaviour {
         protected set { isDead = !value; }
     }
 
+    public float GetHealthPercent()
+    {
+        return (float) currentHealth / maxHealth;
+    }
+
     //public void Update()
     //{
     //    if (isLocalPlayer)
     //        if (Input.GetKey("k"))
-    //            RpcTakeDamage(100);
+    //            RpcTakeDamage(10, null);
     //}
 
     public void PlayerSetup()
@@ -58,6 +63,7 @@ public class Player : NetworkBehaviour {
         {
             GameManager.singleton.SetSceneCameraActive(false);
             GetComponent<PlayerSetup>().playerUIsingleton.SetActive(true);
+            
         }
         CmdBroadCastPlayerSetup();
     }
@@ -108,7 +114,7 @@ public class Player : NetworkBehaviour {
             
     }
 
-    private void Die(string sourcePlayerID)
+    private void Die(string sourcePlayerID = null)
     {
         isDead = true;
         deaths += 1;
@@ -141,6 +147,8 @@ public class Player : NetworkBehaviour {
         transform.position = spawnPoint.position;
         transform.rotation = spawnPoint.rotation;
         yield return new WaitForSeconds(0.1f);
+        PlayerWeapon currentWeapon = GetComponent<WeaponManager>().GetCurrentWeapon();
+        currentWeapon.bullets = currentWeapon.maxBullets;
         PlayerSetup();
     }
 }

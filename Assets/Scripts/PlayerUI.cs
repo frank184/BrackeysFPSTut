@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour {
 
@@ -6,12 +7,20 @@ public class PlayerUI : MonoBehaviour {
     RectTransform thrusterFuelFill;
 
     [SerializeField]
+    RectTransform healthFill;
+
+    [SerializeField]
+    Text ammoText;
+
+    [SerializeField]
     GameObject pauseMenu;
 
     [SerializeField]
     GameObject scoreBoard;
 
+    private Player player;
     private PlayerController controller;
+    private WeaponManager weaponManager;
 
     public void Start()
     {
@@ -20,7 +29,9 @@ public class PlayerUI : MonoBehaviour {
 
     private void Update()
     {
+        SetHealthAmout(player.GetHealthPercent());
         SetFuelAmout(controller.GetThrusterFuelAmount());
+        SetAmmoAmount(weaponManager.GetCurrentWeapon().bullets);
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePauseMenu();
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -40,13 +51,25 @@ public class PlayerUI : MonoBehaviour {
         scoreBoard.SetActive(!scoreBoard.activeSelf);
     }
 
-    public void SetController(PlayerController controller)
+    public void SetPlayer(Player player)
     {
-        this.controller = controller;
+        this.player = player;
+        controller = player.GetComponent<PlayerController>();
+        weaponManager = player.GetComponent<WeaponManager>();
     }
 
     private void SetFuelAmout(float amount)
     {
         thrusterFuelFill.localScale = new Vector3(amount, 1f, 1f);
+    }
+
+    private void SetHealthAmout(float amount)
+    {
+        healthFill.localScale = new Vector3(amount, 1f, 1f);
+    }
+
+    private void SetAmmoAmount(int amount)
+    {
+        ammoText.text = amount.ToString();
     }
 }
